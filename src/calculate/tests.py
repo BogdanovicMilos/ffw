@@ -74,23 +74,34 @@ class AddTestCase(APITestCase):
     def test_add_unauthenticated(self):
         response = self.client.post('/api/add/', {'array': 2})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        print(response.data)
 
-    def test_add(self):
-        response = self.client.post('/api/add/', {'array': 6}, HTTP_AUTHORIZATION=self.auth)
+    def test_add_num(self):
+        response = self.client.post('/api/add/', {'array': 16}, HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        print(response.data['array'][0])
+        print(response.data['array'])
+        print(response.data)
+
+    def test_add_list(self):
+        response = self.client.post('/api/add/', {'array': [4,10]}, HTTP_AUTHORIZATION=self.auth)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        print(response.data['array'])
+        print(response.data)
 
     def test_add_none(self):
         response = self.client.post('/api/add/', {'array': ''}, HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        print(response.data)
 
     def test_add_float(self):
         response = self.client.post('/api/add/', {'array': 23.2}, HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        print(response.data)
 
     def test_add_string(self):
         response = self.client.post('/api/add/', {'array': 'testing'}, HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        print(response.data)
 
 
 class CalculateTestCase(APITestCase):

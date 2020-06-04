@@ -18,29 +18,37 @@ class AddView(APIView):
     def post(request, format=None):
         if not request.user.is_authenticated:
             return Response({'success': False, 'error': 'You must be logged in', 'status_code': 401}, status=status.HTTP_401_UNAUTHORIZED)
-        data = request.data['array']
-        print(data)
-        try:
-            if isinstance(data, int):
-                ARRAY.append(data)
-                return Response({'success': True, 'message': 'Submitted successfully', 'array': ARRAY}, status=status.HTTP_200_OK)
-            elif isinstance(data, list):
-                print(data)
-                for i in data:
-                    num = int(i)
-                    ARRAY.append(num)
-                return Response({'success': True, 'message': 'Submitted successfully', 'array': ARRAY}, status=status.HTTP_200_OK)
-            for i in data.split(','):
+        value = request.data['array']
+        if not value or value == "":
+            return Response({'success': False, 'error': 'Input must be a Integer, not None', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
+        if isinstance(value, float):
+            return Response({'success': False, 'error': 'Input must be a Integer, not Float', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
+        if isinstance(value, str):
+            try:
+                if value.isdigit():
+                    ARRAY.append(int(value))
+                    return Response({'success': True, 'message': 'Submitted successfully', 'array': ARRAY}, status=status.HTTP_200_OK)
+                else:
+                    for i in value.split(','):
+                        num = int(i)
+                        ARRAY.append(num)
+                    return Response({'success': True, 'message': 'Submitted successfully', 'array': ARRAY}, status=status.HTTP_200_OK)
+            except ValueError:
+                try:
+                    if value.isalpha():
+                        return Response({'success': False, 'error': 'Input must be a Integer, not String', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
+                    elif float(value):
+                        return Response({'success': False, 'error': 'Input must be a Integer, not Float', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
+                except ValueError:
+                    return Response({'success': False, 'error': 'Input must be a Integer, not String', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
+        elif isinstance(value, int):
+            ARRAY.append(value)
+            return Response({'success': True, 'message': 'Submitted successfully', 'array': ARRAY},status=status.HTTP_200_OK)
+        elif isinstance(value, list):
+            for i in value:
                 num = int(i)
                 ARRAY.append(num)
             return Response({'success': True, 'message': 'Submitted successfully', 'array': ARRAY}, status=status.HTTP_200_OK)
-        except ValueError:
-            try:
-                val = float(data)
-                if val:
-                    return Response({'success': False, 'error': 'Input must be a Integer, not Float', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
-            except ValueError:
-                return Response({'success': False, 'error': 'Input must be a Integer, not String', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CalculateView(APIView):
