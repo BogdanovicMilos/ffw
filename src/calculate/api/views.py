@@ -20,7 +20,6 @@ class AddView(APIView):
             return Response({'success': False, 'error': 'You must be logged in', 'status_code': 401}, status=status.HTTP_401_UNAUTHORIZED)
         value = request.data['array']
         values = request.POST.getlist('array')
-        print(len(values))
         if len(values) == 2:
             for i in values:
                 num = int(i)

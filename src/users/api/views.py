@@ -24,7 +24,6 @@ class SignIn(OAuthLibMixin, APIView):
             obj = User.objects.filter(Q(email__iexact=serializer.validated_data['email'])).distinct()
             if obj.exists() and obj.count() == 1:
                 user = obj.first()
-                print(user)
                 if user.check_password(serializer.validated_data['password']):
                     r = requests.post('http://127.0.0.1:6767/o/token/',
                         data={
