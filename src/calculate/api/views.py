@@ -19,6 +19,13 @@ class AddView(APIView):
         if not request.user.is_authenticated:
             return Response({'success': False, 'error': 'You must be logged in', 'status_code': 401}, status=status.HTTP_401_UNAUTHORIZED)
         value = request.data['array']
+        values = request.POST.getlist('array')
+        print(len(values))
+        if len(values) == 2:
+            for i in values:
+                num = int(i)
+                ARRAY.append(num)
+            return Response({'success': True, 'message': 'Submitted successfully', 'array': ARRAY}, status=status.HTTP_200_OK)
         if not value or value == "":
             return Response({'success': False, 'error': 'Input must be a Integer, not None', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
         if isinstance(value, float):

@@ -34,6 +34,14 @@ class FlowTestCase(APITestCase):
         self.assertEqual(response_add.status_code, status.HTTP_200_OK)
         print(response_add.data['array'])
 
+        response_add = self.client.post('/api/add/', {'array': 20}, HTTP_AUTHORIZATION=self.auth)
+        self.assertEqual(response_add.status_code, status.HTTP_200_OK)
+        print(response_add.data['array'])
+
+        response_add = self.client.post('/api/add/', {'array': [4, 10]}, HTTP_AUTHORIZATION=self.auth)
+        self.assertEqual(response_add.status_code, status.HTTP_200_OK)
+        print(response_add.data['array'])
+
         response_calculate = self.client.get('/api/calculate/', HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(response_calculate.status_code, status.HTTP_200_OK)
         print(response_calculate.data)
@@ -83,7 +91,7 @@ class AddTestCase(APITestCase):
         print(response.data)
 
     def test_add_list(self):
-        response = self.client.post('/api/add/', {'array': [4,10]}, HTTP_AUTHORIZATION=self.auth)
+        response = self.client.post('/api/add/', {'array': [4, 10]}, HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         print(response.data['array'])
         print(response.data)
@@ -125,15 +133,13 @@ class CalculateTestCase(APITestCase):
         self.access_token.save()
 
     def test_calculate(self):
-        self.client.post('/api/add/', data={'array': 16}, HTTP_AUTHORIZATION=self.auth)
-        self.client.post('/api/add/', {'array': 20}, HTTP_AUTHORIZATION=self.auth)
+        self.client.post('/api/add/', data={'array': [16, 20]}, HTTP_AUTHORIZATION=self.auth)
         response = self.client.get('/api/calculate/', HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         print(response.data)
 
     def test_calculate_all(self):
-        self.client.post('/api/add/', {'array': 4}, HTTP_AUTHORIZATION=self.auth)
-        self.client.post('/api/add/', {'array': 10}, HTTP_AUTHORIZATION=self.auth)
+        self.client.post('/api/add/', {'array': [4, 10]}, HTTP_AUTHORIZATION=self.auth)
         self.client.get('/api/calculate/', HTTP_AUTHORIZATION=self.auth)
         response = self.client.get('/api/calculate/all/', HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -159,8 +165,7 @@ class ResetTestCase(APITestCase):
         self.auth = "Bearer {0}".format(self.access_token.token)
         self.access_token.scope = "read"
         self.access_token.save()
-        self.client.post('/api/add/', {'array': 4}, HTTP_AUTHORIZATION=self.auth)
-        self.client.post('/api/add/', {'array': 10}, HTTP_AUTHORIZATION=self.auth)
+        self.client.post('/api/add/', {'array': [4, 10]}, HTTP_AUTHORIZATION=self.auth)
 
     def test_reset(self):
         response = self.client.post('/api/reset/',  HTTP_AUTHORIZATION=self.auth)
