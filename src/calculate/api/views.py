@@ -19,7 +19,17 @@ class AddView(APIView):
         if not request.user.is_authenticated:
             return Response({'success': False, 'error': 'You must be logged in', 'status_code': 401}, status=status.HTTP_401_UNAUTHORIZED)
         data = request.data['array']
+        print(data)
         try:
+            if isinstance(data, int):
+                ARRAY.append(data)
+                return Response({'success': True, 'message': 'Submitted successfully', 'array': ARRAY}, status=status.HTTP_200_OK)
+            elif isinstance(data, list):
+                print(data)
+                for i in data:
+                    num = int(i)
+                    ARRAY.append(num)
+                return Response({'success': True, 'message': 'Submitted successfully', 'array': ARRAY}, status=status.HTTP_200_OK)
             for i in data.split(','):
                 num = int(i)
                 ARRAY.append(num)
